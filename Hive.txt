@@ -1,0 +1,22 @@
+## get unique job id
+select count(distinct jobid) from table_sub;
+
+## get unique task id
+select count(distinct jobid,taskid) from table_sub;
+
+## get task numbers of jobs
+select max(counted) from
+  (select count(distinct taskid) as counted
+   from table_sub group by jobid) counts;
+
+
+## obtain task length
+create table table_length as
+    select max(start_time) as star_time, end_time from
+    (select t1.time as start_time, t2.time as end_time
+      from table_term t2
+      inner join table_sub t1
+      on t1.jobid=t2.jobid
+      and t1.taskid=t2.taskid
+      where t1.time<t2.time) tj
+     group by end_time;
